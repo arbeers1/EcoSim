@@ -1,0 +1,38 @@
+Pane{
+	-fx-background-color: #388004;
+}
+
+BorderPane{
+	-fx-background-color: #BC986A;
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,1), 20, .6, 0, 0);
+	visibility: hidden;
+}
+
+Label{
+	-fx-font-size: 20;
+}
+
+Slider{
+	-fx-control-inner-background: #8D8741;
+	-fx-background: transparent;
+	-fx-color: #338d9e;
+}
+
+Button{
+	-fx-background-color: #3A3B3C;
+	-fx-text-fill: #F5F5F5;
+	-fx-border-color: #000000;
+	-fx-boder-width: 5px;
+}
+
+Button:hover{
+	-fx-border-color: F5F5F5;
+}
+
+#stop{
+	-fx-background-color: #8b0000;
+}
+
+#start{
+	-fx-background-color: #4B8B3B;
+}
