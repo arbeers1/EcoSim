@@ -15,16 +15,25 @@ import javafx.stage.Stage;
 public class Render extends Application {
   private EcoRunner ecoRun;
   private BorderPane subMenu;
-  private Label grassLabel;
-  private Label bunnyLabel;
+  private Slider grassSlider;
+  private Slider bunnySlider;
+  private boolean started;
   
   /**
    * Initializes class variables. Makes display visible.
    */
   @Override
   public void start(Stage primaryStage) throws Exception {
-    ecoRun = new EcoThread().initialize();
-    
+    started = false;
+    ecoRun = new EcoRunner();
+    //New thread needed for logic loop 
+    new Thread() {
+      @Override
+      public void run() {
+        ecoRun.loop();
+      }
+    }.start();
+
     //Build Scene
     Scene scene = new Scene(buildContainer(), 0, 0);
     scene.getStylesheets().add(Render.class.getResource("style.css").toExternalForm());
@@ -40,6 +49,8 @@ public class Render extends Application {
     stage.setTitle("Ecosystem Simulator");
     stage.setMaximized(true);
     stage.show();
+    //Stop ecoThread on display close
+    stage.setOnCloseRequest(e -> System.exit(0)); 
     
     subMenu.setMaxWidth(stage.getWidth() * .3);
     subMenu.setMaxHeight(stage.getHeight() * .3);
@@ -59,12 +70,13 @@ public class Render extends Application {
     BorderPane.setAlignment(label, Pos.TOP_CENTER);
     
     VBox sliderContainer = new VBox(5);
-    grassLabel = new Label("Starting grass population:");
-    bunnyLabel = new Label("Starting bunny population:");
-    Slider grassSlider = new Slider(0, 100, 50);
-    Slider bunnySlider = new Slider(0, 100, 50);
+    grassSlider = new Slider(0, 100, 50);
+    bunnySlider = new Slider(0, 100, 50);
+    Label grassLabel = new Label("Starting grass population: " + (int) grassSlider.getValue());
+    Label bunnyLabel = new Label("Starting bunny population: " + (int) bunnySlider.getValue());
     sliderContainer.getChildren().addAll(grassLabel, grassSlider, bunnyLabel, bunnySlider);
     
+    VBox wrapper = new VBox(5);
     HBox buttonContainer = new HBox(5);
     Button start = new Button("Start"); start.setId("start");
     Button stop = new Button("Stop"); stop.setId("stop");
@@ -73,16 +85,32 @@ public class Render extends Application {
     HBox.setHgrow(stop, Priority.ALWAYS); stop.setMaxWidth(Double.MAX_VALUE);
     HBox.setHgrow(reset, Priority.ALWAYS); reset.setMaxWidth(Double.MAX_VALUE);
     buttonContainer.getChildren().addAll(reset, stop, start);
+    Label console = new Label();
+    wrapper.getChildren().addAll(buttonContainer, console);
     
     subMenu.setTop(label);
     subMenu.setCenter(sliderContainer);
-    subMenu.setBottom(buttonContainer);
+    subMenu.setBottom(wrapper);
     
     container.getChildren().addAll(pane, subMenu);
     StackPane.setAlignment(subMenu, Pos.TOP_LEFT);
     
-    //TODO Listeners for menu components
+    // Listeners for menu components
     grassSlider.valueProperty().addListener(e -> grassLabel.setText("Starting grass population: " + (int)grassSlider.getValue()));
+    bunnySlider.valueProperty().addListener(e -> bunnyLabel.setText("Starting bunny population: " + (int)bunnySlider.getValue()));
+    start.setOnAction(e -> {
+      if(!started) {
+        console.setText("Simulation Started");
+        ecoRun.start((int) grassSlider.getValue(), (int) bunnySlider.getValue());
+        started = true;
+      }else {
+        console.setText("Simulation must be reset");
+      }
+    });
+    stop.setOnAction(e -> {
+      console.setText("Simulation Stopped"); 
+      ecoRun.stop();});
+    reset.setOnAction(e -> {console.setText("Simulation Reset");ecoRun.reset();started = false;});
     return container;
   }
   
