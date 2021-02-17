@@ -3,12 +3,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Bunny {
-  private long birthDate;
   private long age;
   private int hunger;
-  private boolean mature;
-  private double screenWidth;
-  private double screenHeight;
   private ImageView bunnyImage;
   int currX;
   int currY;
@@ -17,13 +13,11 @@ public class Bunny {
   private Image bunnyLeft;
   private Image bunnyRight;
   private Random r;
+  private Grass grass;
   
-  public Bunny(long birthDate,int x, int y, double screenWidth, double screenHeight) {
+  public Bunny(int x, int y) {
     r = new Random();
-    this.screenWidth = screenWidth;
-    this.screenHeight = screenHeight;
-    this.birthDate = birthDate;
-    hunger = 1000;
+    hunger = 3000;
     age = 0;
     bunnyLeft = new Image(getClass().getResource("bunnyLeft.png").toExternalForm());
     bunnyRight = new Image(getClass().getResource("bunnyRight.png").toExternalForm());
@@ -34,53 +28,54 @@ public class Bunny {
     targetY = currY;
     bunnyImage.setX(x);
     bunnyImage.setY(y);
+    grass = null;
     Render.add(bunnyImage);
   }
   
   /**
    * @param cycle - The current iteration of the loop
-   * @return -1 if dead, 0 if healthy, 1 if mature and healthy
+   * @return -1 if dead, 0 if healthy
    */
   public int update(long cycle) {
     //Checks death conditions
     hunger--;
     if(hunger <= 0) { //Rabbit can starve
       die();
+      System.out.println("died from hunger");
       return -1;
     }
-    age = cycle - birthDate;
-    if(age > 3000) { //Rabbit can die of age
+    age++;
+    if(age > 30000) { //Rabbit can die of age
       die();
+      System.out.println("died from age");
       return -1;
+      //return 0;
     }
-    if(age > 350) { //Age at which rabbit can breed
-      mature = true;
-    }
-    if( hunger < 50) { //Rabbit can get hungry
+    if( hunger < 1600 && grass == null) { //Rabbit can get hungry
       eat();
     }
     
     //Random chance to move around the map
     int n = r.nextInt(10000);
-    System.out.println(n);
-    if(n < 10) {
-      targetX = r.nextInt((int) screenWidth - 100) + 50;
-      targetY = r.nextInt((int) screenHeight - 100) + 50;
+    if(n < 10 && grass == null) {
+      targetX = r.nextInt((int) Render.getScreenWidth() - 100) + 50;
+      targetY = r.nextInt((int) Render.getScreenHeight() - 100) + 50;
     }
     move();
     
-    if(mature) {
-      return 1;
-    }else {
-      return 0;
-    }
+    return 0;
   }
   
   /**
    * Searches for closest grass to eat
    */
   private void eat() {
-    
+    Grass g = Grass.findFood();
+    if(g != null) {
+      grass = g;
+      targetX = g.getX();
+      targetY = g.getY();
+    }
   }
   
   /**
@@ -88,7 +83,6 @@ public class Bunny {
    */
   private void move() {
     if(currX < targetX) {
-      //TODO Set Left/Right image Modifiers
       currX++;
       bunnyImage.setImage(bunnyRight);
     }else if(currX > targetX) {
@@ -103,6 +97,11 @@ public class Bunny {
       currY--;
     }
     bunnyImage.setY(currY);
+    if(currX == targetX && currY == targetY && grass != null) {
+      grass.delete();
+      grass = null;
+      hunger = 3000;
+    }
   }
   
   /**
