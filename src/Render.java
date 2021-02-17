@@ -1,9 +1,11 @@
+import java.util.Random;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -14,6 +16,7 @@ import javafx.stage.Stage;
 
 public class Render extends Application {
   private EcoRunner ecoRun;
+  private static Pane container;
   private BorderPane subMenu;
   private Slider grassSlider;
   private Slider bunnySlider;
@@ -52,16 +55,16 @@ public class Render extends Application {
     //Stop ecoThread on display close
     stage.setOnCloseRequest(e -> System.exit(0)); 
     
-    subMenu.setMaxWidth(stage.getWidth() * .3);
-    subMenu.setMaxHeight(stage.getHeight() * .3);
+    subMenu.setMinWidth(stage.getWidth() * .3);
+    subMenu.setMinHeight(stage.getHeight() * .3);
   }
   
   /**
    * Initializes main display
    * @return - Pane Container
    */
-  private StackPane buildContainer() {
-    StackPane container = new StackPane();
+  private Pane buildContainer() {
+    container = new Pane();
     Pane pane = new Pane();
     
     //The menu in which the user will interact with the program
@@ -101,7 +104,7 @@ public class Render extends Application {
     start.setOnAction(e -> {
       if(!started) {
         console.setText("Simulation Started");
-        ecoRun.start((int) grassSlider.getValue(), (int) bunnySlider.getValue());
+        ecoRun.start((int) grassSlider.getValue(), (int) bunnySlider.getValue(), container.getHeight(), container.getWidth());
         started = true;
       }else {
         console.setText("Simulation must be reset");
@@ -115,12 +118,28 @@ public class Render extends Application {
   }
   
   /**
+   * Adds an image to the scene
+   * @param img - image to add
+   */
+  public static void add(ImageView img) {
+    container.getChildren().add(img);
+  }
+  
+  /**
    * Toggles visibility of menu on call
    */
   private void menu() {
     subMenu.setVisible(!subMenu.isVisible());
   }
 
+  public static double getScreenHeight() {
+    return container.getHeight();
+  }
+  
+  public static double getScreenWidth() {
+    return container.getWidth();
+  }
+   
   /**
    * Starts display
    */
