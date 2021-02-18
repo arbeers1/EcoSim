@@ -1,7 +1,7 @@
-import java.util.Random;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -21,6 +21,7 @@ public class Render extends Application {
   private Slider grassSlider;
   private Slider bunnySlider;
   private boolean started;
+  private static LineChart graph;
   
   /**
    * Initializes class variables. Makes display visible.
@@ -28,6 +29,9 @@ public class Render extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     started = false;
+    new Chart();
+    graph = Chart.getChart();
+    graph.setVisible(false);
     ecoRun = new EcoRunner();
     //New thread needed for logic loop 
     new Thread() {
@@ -39,10 +43,12 @@ public class Render extends Application {
 
     //Build Scene
     Scene scene = new Scene(buildContainer(), 0, 0);
+    container.getChildren().add(graph);
     scene.getStylesheets().add(Render.class.getResource("style.css").toExternalForm());
     scene.setOnKeyPressed(e -> {
       switch(e.getCode()) {
         case M: menu(); break;
+        case G: graph(); break;
       }
     });
     
@@ -55,6 +61,8 @@ public class Render extends Application {
     //Stop ecoThread on display close
     stage.setOnCloseRequest(e -> System.exit(0)); 
     
+    graph.setMinWidth(stage.getWidth() * .5);
+    graph.setMinHeight(stage.getWidth() * .5);
     subMenu.setMinWidth(stage.getWidth() * .3);
     subMenu.setMinHeight(stage.getHeight() * .3);
   }
@@ -117,11 +125,20 @@ public class Render extends Application {
     return container;
   }
   
+  private void graph() {
+    if(graph.isVisible()) {
+      graph.setVisible(false);
+    }else {
+      graph.setVisible(true);
+    }
+  }
+  
   /**
    * Adds an image to the scene
    * @param img - image to add
    */
   public static void add(ImageView img) {
+    graph.toFront();
     container.getChildren().add(img);
   }
   
