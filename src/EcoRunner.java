@@ -82,6 +82,7 @@ public class EcoRunner {
             }
           });
           if(cycle % 500 == 0) {
+            Chart.add(cycle, bunnyPop);
             Platform.runLater(() -> {grassList.add(Grass.update()); grassPop++;});
           }
           if(cycle % 3000 == 0) {
