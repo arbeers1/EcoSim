@@ -3,13 +3,21 @@ import java.util.Random;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * @author Alexander Beers
+ * A grass object in the sim. Food source of bunnies
+ */
 public class Grass {
-  private static ArrayList<Grass> grassList = new ArrayList<Grass>();
+  private static ArrayList<Grass> grassList = new ArrayList<Grass>(); //List of all grass to exist
   private static final Random r = new Random();
   private ImageView grass;
   private int x;
   private int y;
   
+  /**
+   * @param x - x location to spawn
+   * @param y - y location to spawn
+   */
   public Grass(int x, int y) {
     Image img = new Image(getClass().getResource("grass.png").toExternalForm());
     grass = new ImageView(img);
@@ -21,6 +29,9 @@ public class Grass {
     grassList.add(this);
   }
   
+  /**
+   * @return Creates a new grass on call and returns it
+   */
   public static Grass update() {
     return new Grass(r.nextInt((int) Render.getScreenWidth()), r.nextInt((int) Render.getScreenHeight()));
   }
@@ -37,18 +48,30 @@ public class Grass {
     return g;
   }
   
+  /**
+   * @return x location
+   */
   public int getX() {
     return x;
   }
   
+  /**
+   * @return y location
+   */
   public int getY() {
     return y;
   }
   
+  /**
+   * Removes grass from scene
+   */
   public void delete() {
     grass.setImage(null);
   }
   
+  /**
+   * @return population size of grass
+   */
   public static int getGrassPopulation() {
     return grassList.size();
   }

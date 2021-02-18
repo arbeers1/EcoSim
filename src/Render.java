@@ -14,6 +14,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * @author Alexander Beers
+ * The Display / Gui for the program
+ */
 public class Render extends Application {
   private EcoRunner ecoRun;
   private static Pane container;
@@ -91,11 +95,9 @@ public class Render extends Application {
     HBox buttonContainer = new HBox(5);
     Button start = new Button("Start"); start.setId("start");
     Button stop = new Button("Stop"); stop.setId("stop");
-    Button reset = new Button("Reset"); 
     HBox.setHgrow(start, Priority.ALWAYS); start.setMaxWidth(Double.MAX_VALUE);
     HBox.setHgrow(stop, Priority.ALWAYS); stop.setMaxWidth(Double.MAX_VALUE);
-    HBox.setHgrow(reset, Priority.ALWAYS); reset.setMaxWidth(Double.MAX_VALUE);
-    buttonContainer.getChildren().addAll(reset, stop, start);
+    buttonContainer.getChildren().addAll(stop, start);
     Label console = new Label();
     wrapper.getChildren().addAll(buttonContainer, console);
     
@@ -121,10 +123,12 @@ public class Render extends Application {
     stop.setOnAction(e -> {
       console.setText("Simulation Stopped"); 
       ecoRun.stop();});
-    reset.setOnAction(e -> {console.setText("Simulation Reset");ecoRun.reset();started = false;});
     return container;
   }
   
+  /**
+   * sets graph visible/invisible
+   */
   private void graph() {
     if(graph.isVisible()) {
       graph.setVisible(false);
@@ -138,8 +142,8 @@ public class Render extends Application {
    * @param img - image to add
    */
   public static void add(ImageView img) {
-    graph.toFront();
     container.getChildren().add(img);
+    graph.toFront();
   }
   
   /**
@@ -149,10 +153,16 @@ public class Render extends Application {
     subMenu.setVisible(!subMenu.isVisible());
   }
 
+  /**
+   * @return screen height
+   */
   public static double getScreenHeight() {
     return container.getHeight();
   }
   
+  /**
+   * @return screen width
+   */
   public static double getScreenWidth() {
     return container.getWidth();
   }

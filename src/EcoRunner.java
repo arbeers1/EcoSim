@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.Random;
 import javafx.application.Platform;
 
+/**
+ * @author Alexander Beers
+ * Handles sim logic
+ */
 public class EcoRunner {
   private boolean running;
   private int grassPop;
@@ -57,6 +61,9 @@ public class EcoRunner {
     
   }
   
+  /**
+   * The logic loop - controls cycling through each step of the simulation.
+   */
   public void loop() {
     long startTime = System.currentTimeMillis();
     //Polling loop
@@ -67,9 +74,8 @@ public class EcoRunner {
       while(running) {
         
         //This loop updates the logic
-        while(System.currentTimeMillis() - startTime > 5) {
+        while(System.currentTimeMillis() - startTime > 1) {
           grassPop = Grass.getGrassPopulation();
-          System.out.println("grass pop: " + grassPop + "  " + "bunny pop: " + bunnyPop);
           startTime = System.currentTimeMillis();
           cycle++;
           //Updates each bunny in the list
@@ -81,10 +87,14 @@ public class EcoRunner {
               }
             }
           });
-          if(cycle % 500 == 0) {
-            Chart.add(cycle, bunnyPop);
-            Platform.runLater(() -> {grassList.add(Grass.update()); grassPop++;});
+          //New grass every 250 cycles
+          if(cycle % 250 == 0) {
+            Platform.runLater(() -> {
+              Chart.add(cycle, bunnyPop);
+              grassList.add(Grass.update()); grassPop++;
+              });
           }
+          //Bunnies reproduce every 3000 cycles
           if(cycle % 3000 == 0) {
             int breedNum = bunnyPop/2;
             for(int i = 0; i < breedNum; i++) {

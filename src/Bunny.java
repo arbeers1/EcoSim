@@ -2,6 +2,10 @@ import java.util.Random;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * @author Alexander Beers
+ * A bunny object in the sim (Main subject)
+ */
 public class Bunny {
   private long age;
   private int hunger;
@@ -15,6 +19,10 @@ public class Bunny {
   private Random r;
   private Grass grass;
   
+  /**
+   * @param x - x location to spawn
+   * @param y - y location to spawn
+   */
   public Bunny(int x, int y) {
     r = new Random();
     hunger = 3000;
@@ -96,6 +104,7 @@ public class Bunny {
     }else if(currY > targetY) {
       currY--;
     }
+    //Checks if the rabbit is at a grass when searching for grass
     bunnyImage.setY(currY);
     if(currX == targetX && currY == targetY && grass != null) {
       grass.delete();
