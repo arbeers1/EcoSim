@@ -65,19 +65,16 @@ public class EcoRunner {
     //Polling loop
     while(true) {
       //Iteration loop consisting of logic cycle and draw
-      System.out.print(""); //This statement is needed for loop to work due to concurrency
+      System.out.print(""); //Unsure why but this print helps update display and sim threads.
       
-      while(running) {
-        
-        //This loop updates the logic
-        if(System.currentTimeMillis() - startTime > 1) {
-          grassPop = Grass.getGrassPopulation();
+      while(running) { //This loop updates the logic
+        if(System.currentTimeMillis() - startTime > 10) {
           startTime = System.currentTimeMillis();
           cycle++;
           //Updates each bunny in the list
           Platform.runLater(() -> {
             for(int i = 0; i < bunnyPop; i++) {
-              if(bunnyList.get(i).update(cycle) == -1) {
+              if(bunnyList.get(i).update(cycle) == -1) { //Case if bunny dies
                 bunnyPop--;
                 bunnyList.remove(i);
               }
@@ -87,7 +84,8 @@ public class EcoRunner {
           if(cycle % 250 == 0) {
             Platform.runLater(() -> {
               Chart.add(cycle, bunnyPop);
-              grassList.add(Grass.update()); grassPop++;
+              grassList.add(Grass.update());
+              grassPop++;
               });
           }
           //Bunnies reproduce every 3000 cycles
