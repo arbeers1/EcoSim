@@ -57,10 +57,6 @@ public class EcoRunner {
     System.out.println("running is false");
   }
   
-  public void reset() {
-    
-  }
-  
   /**
    * The logic loop - controls cycling through each step of the simulation.
    */
