@@ -70,7 +70,7 @@ public class EcoRunner {
       while(running) {
         
         //This loop updates the logic
-        while(System.currentTimeMillis() - startTime > 1) {
+        if(System.currentTimeMillis() - startTime > 1) {
           grassPop = Grass.getGrassPopulation();
           startTime = System.currentTimeMillis();
           cycle++;
